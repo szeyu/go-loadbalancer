@@ -21,9 +21,13 @@ FROM alpine:latest
 
 WORKDIR /app
 
-# Copy the binary from builder
+# Copy the binary and env file from builder
 COPY --from=builder /app/main .
-COPY --from=builder /app/.env .
+COPY .env .
+
+# Set environment variables from .env file (optional, as we're copying the file)
+ENV PORT=8080
+ENV API_KEYS=key1,key2,key3,key4,key5
 
 # Expose port 8080
 EXPOSE 8080

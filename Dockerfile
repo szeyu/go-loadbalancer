@@ -25,10 +25,6 @@ WORKDIR /app
 COPY --from=builder /app/main .
 COPY .env .
 
-# Set environment variables from .env file (optional, as we're copying the file)
-ENV PORT=8080
-ENV API_KEYS=key1,key2,key3,key4,key5
-
 # Expose port 8080
 EXPOSE 8080
 

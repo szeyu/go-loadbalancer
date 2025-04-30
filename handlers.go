@@ -1,72 +1,63 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // Health check handler
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	response := map[string]string{"status": "ok", "message": "Server is healthy"}
-	json.NewEncoder(w).Encode(response)
+func healthHandler(c *gin.Context) {
+	fmt.Println("Health check received")
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "ok",
+		"message": "Server is healthy",
+	})
 }
 
 // Handler to demonstrate load balancer functionality
-func apiKeyHandler(w http.ResponseWriter, r *http.Request) {
+func apiKeyHandler(c *gin.Context) {
 	// Get the next API key from the load balancer
 	apiKey := loadBalancer.GetNextApiKey()
 	fmt.Println("API Key:", apiKey)
 
-	response := map[string]string{
+	c.JSON(http.StatusOK, gin.H{
 		"api_key": apiKey,
 		"message": "This API key would be used for external service authentication",
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	})
 }
 
-func loadBalancerSimulatorHandler(w http.ResponseWriter, r *http.Request) {
+func loadBalancerSimulatorHandler(c *gin.Context) {
 	// Extract the number parameter from the URL path
-	numStr := r.URL.Query().Get("n")
-	if numStr == "" {
-		numStr = "10" // Default value if not provided
-	}
+	numStr := c.DefaultQuery("n", "10") // Default value if not provided
 
 	// Convert string to int
 	num, err := strconv.Atoi(numStr)
 	if err != nil {
-		http.Error(w, "Invalid number parameter", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid number parameter"})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	response := map[string]string{"message": "Running load balancer simulation"}
-	json.NewEncoder(w).Encode(response)
+	c.JSON(http.StatusOK, gin.H{"message": "Running load balancer simulation"})
 
 	// Run the simulation with the provided number
 	go RunLoadBalancerSimulation(num)
 }
 
-func loadBalancerSimulatorConcurrentHandler(w http.ResponseWriter, r *http.Request) {
+func loadBalancerSimulatorConcurrentHandler(c *gin.Context) {
 	// Extract the number parameter from the URL path
-	numStr := r.URL.Query().Get("n")
-	if numStr == "" {
-		numStr = "10" // Default value if not provided
-	}
+	numStr := c.DefaultQuery("n", "10") // Default value if not provided
 
 	// Convert string to int
 	num, err := strconv.Atoi(numStr)
 	if err != nil {
-		http.Error(w, "Invalid number parameter", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid number parameter"})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	response := map[string]string{"message": "Running concurrent load balancer simulation"}
-	json.NewEncoder(w).Encode(response)
+	c.JSON(http.StatusOK, gin.H{"message": "Running concurrent load balancer simulation"})
 
 	// We need to implement this function in simulator.go
 	go RunLoadBalancerSimulationConcurrent(num)

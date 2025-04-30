@@ -26,7 +26,7 @@ func InitializeServerAddress() {
 		port = "8080" // Default to 8080 if PORT is not set
 	}
 
-	serverAddr = fmt.Sprintf("localhost:%s", port)
+	serverAddr = fmt.Sprintf("0.0.0.0:%s", port)
 }
 
 // InitializeLoadBalancer sets up the load balancer with API keys
@@ -34,7 +34,7 @@ func InitializeLoadBalancer() {
 	// Initialize api keys from env
 	apiKeys := os.Getenv("API_KEYS")
 	if apiKeys == "" {
-		log.Fatal("API_KEYS environment variable is not set")
+		log.Println("API_KEYS environment variable is not set, using default keys")
 		apiKeys = "key1,key2,key3,key4,key5" // set default api keys
 	}
 

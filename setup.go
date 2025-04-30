@@ -11,7 +11,5 @@ func setup() {
 	// Initialize necessary components
 	InitializeLoadBalancer()
 	InitializeServerAddress()
-
-	SetupRoutes()
 	StartHTTPServer(serverAddr)
 }
